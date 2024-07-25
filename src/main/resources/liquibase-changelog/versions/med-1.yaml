@@ -1,0 +1,46 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: Kuba
+      changes:
+        - createTable:
+            tableName: PATIENT
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: idCardNo
+                  type: VARCHAR(255)
+              - column:
+                  name: firstName
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: lastName
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: phoneNumber
+                  type: VARCHAR(20)
+              - column:
+                  name: birthday
+                  type: DATE
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  foreignKey:
+                    name: fk_patient_user
+                    references: User(id)
+                    onDelete: CASCADE

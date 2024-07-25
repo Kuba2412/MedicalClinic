@@ -1,0 +1,68 @@
+databaseChangeLog:
+  - changeSet:
+      id: 4
+      author: Kuba
+      changes:
+        - createTable:
+            tableName: DOCTOR
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: first_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: specialization
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: 4.1
+      author: Kuba
+      changes:
+        - createTable:
+          tableName: doctor_institution
+          columns:
+            - column:
+              name: doctor_id
+              type: BIGINT
+              constraints:
+                nullable: false
+            - column:
+              name: institution_id
+              type: BIGINT
+              constraints:
+                nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: doctor_institution
+            baseColumnNames: doctor_id
+            constraintName: fk_doctor_institution_doctor
+            referencedTableName: doctor
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: doctor_institution
+            baseColumnNames: institution_id
+            constraintNames: fk_doctor_institution_institution
+            referencedTableName: institution
+            referencedColumnNames: id
+
+
+
+

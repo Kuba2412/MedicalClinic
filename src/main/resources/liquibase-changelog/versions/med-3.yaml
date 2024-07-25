@@ -1,0 +1,32 @@
+databaseChangeLog:
+  - changeSet:
+      id: 3
+      author: Kuba
+      changes:
+        - createTable:
+            tableName: VISIT
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: start_visit
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: end_visit
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: patient_id
+                  type: BIGINT
+                  foreignKey:
+                    name: fk_visit_patient
+                    references: patient(id)
+                    onDelete: CASCADE
