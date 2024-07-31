@@ -67,45 +67,6 @@ public class DoctorServiceTest {
         verify(doctorRepository, never()).save(any(Doctor.class));
     }
 
-//    @Test
-//    void getAllDoctors_DoctorsExist_DoctorsReturned() {
-//        // given
-//        Pageable pageable = PageRequest.of(0, 10);
-//        Doctor doctor1 = new Doctor();
-//        doctor1.setId(1L);
-//        doctor1.setFirstName("Kuba");
-//        doctor1.setLastName("Ppp");
-//        doctor1.setSpecialization("Kardiologia");
-//
-//        Doctor doctor2 = new Doctor();
-//        doctor2.setId(2L);
-//        doctor2.setFirstName("Anna");
-//        doctor2.setLastName("Sss");
-//        doctor2.setSpecialization("Neurologia");
-//
-//        List<Doctor> doctors = Arrays.asList(doctor1, doctor2);
-//        Page<Doctor> doctorPage = new PageImpl<>(doctors, pageable, doctors.size());
-//        when(doctorRepository.findAll(pageable)).thenReturn(doctorPage);
-//
-//        // when
-//        List<SimpleDoctorDTO> result = doctorService.getAllDoctors(pageable);
-//        System.out.println(result);
-//
-//        // then
-//        assertNotNull(result);
-//        assertEquals(doctors.size(), result.size());
-//
-//        assertEquals(doctor1.getFirstName(), result.get(0).getFirstName());
-//        assertEquals(doctor1.getLastName(), result.get(0).getLastName());
-//        assertEquals(doctor1.getSpecialization(), result.get(0).getSpecialization());
-//
-//        assertEquals(doctor2.getFirstName(), result.get(1).getFirstName());
-//        assertEquals(doctor2.getLastName(), result.get(1).getLastName());
-//        assertEquals(doctor2.getSpecialization(), result.get(1).getSpecialization());
-//
-//        verify(doctorMapper, times(doctors.size())).toSimpleDoctorDTO(any(Doctor.class));
-//    }
-
     @Test
     void getAllDoctors_NoDoctorsExist_EmptyListReturned() {
         // given
