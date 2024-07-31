@@ -1,11 +1,12 @@
 package com.Kuba2412.MedicalClinic.handler;
 
-import com.Kuba2412.MedicalClinic.handler.exception.NotFoundException;
+import com.Kuba2412.MedicalClinic.handler.exception.DoctorNotFoundException;
+import com.Kuba2412.MedicalClinic.handler.exception.PatientNotFound;
+import com.Kuba2412.MedicalClinic.handler.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 @ControllerAdvice
@@ -16,11 +17,21 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
     }
 
-    @ExceptionHandler(NotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<String> handleNotFoundException(NotFoundException ex) {
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(ex.getMessage());
+    @ExceptionHandler(PatientNotFound.class)
+    public ResponseEntity<String> handlePatientNotFound(PatientNotFound ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<String> handleUserNotFound(UserNotFoundException ex){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(DoctorNotFoundException.class)
+    public ResponseEntity<String> handleDoctorNotFound(DoctorNotFoundException ex){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 }
+
+
+

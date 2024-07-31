@@ -1,34 +1,31 @@
 databaseChangeLog:
   - changeSet:
-      id: 4
+      id: 5
       author: Kuba2412
       changes:
         - createTable:
-            tableName: DOCTOR
+            tableName: INSTITUTION
             columns:
               - column:
                   autoIncrement: true
                   constraints:
                     nullable: false
                     primaryKey: true
-                    primaryKeyName: pk_doctor_id
+                    primaryKeyName: pk_institution_id
                   name: id
                   type: BIGINT
               - column:
-                  name: firstName
+                  name: name
                   type: VARCHAR(255)
               - column:
-                  name: lastName
+                  name: city
                   type: VARCHAR(255)
               - column:
-                  name: specialization
+                  name: postalCode
+                  type: VARCHAR(20)
+              - column:
+                  name: street
                   type: VARCHAR(255)
               - column:
-                  name: email
-                  type: VARCHAR(255)
-                  constraints:
-                    unique: true
-                    uniqueConstraintName: uk_doctor_email
-              - column:
-                  name: password
-                  type: VARCHAR(255)
+                  name: buildingNumber
+                  type: BIGINT

@@ -1,4 +1,4 @@
-package com.Kuba2412.MedicalClinic.model.mapper;
+package com.Kuba2412.MedicalClinic.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

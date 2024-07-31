@@ -1,5 +1,6 @@
 package com.Kuba2412.MedicalClinic.service;
 
+import com.Kuba2412.MedicalClinic.handler.exception.PatientNotFound;
 import com.Kuba2412.MedicalClinic.model.mapper.PatientMapper;
 import com.Kuba2412.MedicalClinic.model.dto.PatientDTO;
 import com.Kuba2412.MedicalClinic.repository.PatientRepository;
@@ -34,7 +35,7 @@ public class PatientService {
 
     public PatientDTO getPatientDtoByEmail(String email) {
         Patient patient = patientRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("Patient not found"));
+                .orElseThrow(() -> new PatientNotFound("Patient not found"));
         return patientMapper.patientToPatientDTO(patient);
     }
 
@@ -90,7 +91,7 @@ public class PatientService {
 
     public void deletePatientByEmail(String email) {
         Patient patient = patientRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("Patient not found"));
+                .orElseThrow(() -> new PatientNotFound("Patient not found"));
         patientRepository.delete(patient);
     }
 
@@ -119,11 +120,25 @@ public class PatientService {
      *                     pacjenta o podanym adresie e-mail w bazie danych.
      */
 
+    @Transactional
     public PatientDTO updatePatientByEmail(String email, PatientDTO newPatientDto) {
         Patient patient = patientRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("Patient not found"));
-        Patient updatedPatient = patientMapper.patientDTOToPatient(newPatientDto);
-        updatedPatient.setId(patient.getId());
-        return patientMapper.patientToPatientDTO(patientRepository.save(updatedPatient));
+                .orElseThrow(() -> new PatientNotFound("Patient not found"));
+
+        if (newPatientDto.getFirstName() != null) {
+            patient.setFirstName(newPatientDto.getFirstName());
+        }
+        if (newPatientDto.getLastName() != null) {
+            patient.setLastName(newPatientDto.getLastName());
+        }
+        if (newPatientDto.getPhoneNumber() != null) {
+            patient.setPhoneNumber(newPatientDto.getPhoneNumber());
+        }
+        if (newPatientDto.getEmail() != null) {
+            patient.setEmail(newPatientDto.getEmail());
+        }
+
+        Patient updatedPatient = patientRepository.save(patient);
+        return patientMapper.patientToPatientDTO(updatedPatient);
     }
 }

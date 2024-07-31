@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-public interface VisitRepository extends JpaRepository<Visit, Long>, VisitMapper {
+public interface VisitRepository extends JpaRepository<Visit, Long>  {
 
     List<Visit> findAllByPatientId(Long patientId);
 

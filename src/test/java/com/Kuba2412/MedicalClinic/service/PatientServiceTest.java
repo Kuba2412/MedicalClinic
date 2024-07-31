@@ -1,5 +1,6 @@
 package com.Kuba2412.MedicalClinic.service;
 
+import com.Kuba2412.MedicalClinic.handler.exception.PatientNotFound;
 import com.Kuba2412.MedicalClinic.model.Patient;
 import com.Kuba2412.MedicalClinic.model.dto.PatientDTO;
 import com.Kuba2412.MedicalClinic.model.mapper.PatientMapper;
@@ -60,10 +61,9 @@ public class PatientServiceTest {
         String nonExsistentEmail = "kp123@gmail.com";
 
         // when + then
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> patientService.getPatientDtoByEmail(nonExsistentEmail));
-        assertEquals("Patient not found.", exception.getMessage());
+        Exception exception = assertThrows(PatientNotFound.class, () -> patientService.getPatientDtoByEmail(nonExsistentEmail));
+        assertEquals("Patient not found" , exception.getMessage());
         verify(patientRepository, times(1)).findByEmail(nonExsistentEmail);
-
     }
 
     @Test
@@ -122,8 +122,8 @@ public class PatientServiceTest {
         when(patientRepository.findByEmail(patientEmail2)).thenReturn(Optional.empty());
 
         // when + then
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> patientService.deletePatientByEmail(patientEmail2));
-        assertEquals("Patient not found.", exception.getMessage());
+        Exception exception = assertThrows(PatientNotFound.class, () -> patientService.deletePatientByEmail(patientEmail2));
+        assertEquals("Patient not found" , exception.getMessage());
         verify(patientRepository, times(1)).findByEmail(patientEmail2);
         verify(patientRepository, never()).delete(any(Patient.class));
     }
@@ -164,8 +164,8 @@ public class PatientServiceTest {
         when(patientRepository.findByEmail(anyString())).thenReturn(Optional.empty());
 
         // when + then
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> patientService.updatePatientByEmail(nonExsistentEmail1, newPatientDto));
-        assertEquals("Patient not found.", exception.getMessage());
+        Exception exception = assertThrows(PatientNotFound.class, () -> patientService.updatePatientByEmail(nonExsistentEmail1, newPatientDto));
+        assertEquals("Patient not found" , exception.getMessage());
         verify(patientRepository, times(1)).findByEmail(nonExsistentEmail1);
     }
 

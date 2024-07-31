@@ -1,33 +1,41 @@
 databaseChangeLog:
   - changeSet:
       id: 2
-      author: Kuba
+      author: Kuba2412
       changes:
         - createTable:
-            tableName: USER
+            tableName: app_user
             columns:
               - column:
-                  name: id
-                  type: BIGINT
                   autoIncrement: true
                   constraints:
-                    primaryKey: true
                     nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_user_id
+                    name: id
+                    type: BIGINT
               - column:
                   name: username
                   type: VARCHAR(255)
                   constraints:
                     unique: true
-                    nullable: false
+                    uniqueConstraintName: uk_user_username
               - column:
                   name: password
                   type: VARCHAR(255)
-                  constraints:
-                    nullable: false
+        - addColumn:
+            tableName: PATIENT
+            columns:
               - column:
-                  name: patient_id
+                  name: user_id
                   type: BIGINT
-                  foreignKey:
-                    name: fk_user_patient
-                    references: Patient(id)
-                    onDelete: CASCADE
+                  constraints:
+                    nullable: true
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: PATIENT
+            constraintName: fk_patient_user
+            referencedTableName: app_user
+            referencedColumnNames: id
+            onDelete: CASCADE
+            onUpdate: CASCADE

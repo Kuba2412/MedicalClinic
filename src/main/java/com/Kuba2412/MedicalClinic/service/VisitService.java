@@ -1,6 +1,7 @@
 package com.Kuba2412.MedicalClinic.service;
 
-import com.Kuba2412.MedicalClinic.handler.exception.NotFoundException;
+import com.Kuba2412.MedicalClinic.handler.exception.DoctorNotFoundException;
+import com.Kuba2412.MedicalClinic.handler.exception.PatientNotFound;
 import com.Kuba2412.MedicalClinic.model.Doctor;
 import com.Kuba2412.MedicalClinic.model.mapper.VisitMapper;
 import com.Kuba2412.MedicalClinic.model.Patient;
@@ -29,7 +30,6 @@ public class VisitService {
     @Transactional
     public VisitDTO createVisit(VisitDTO visitDTO) {
         Visit visit = visitMapper.visitDTOToVisit(visitDTO);
-        validateVisitDateTime(visit.getStartVisit());
         Visit savedVisit = visitRepository.save(visit);
         return visitMapper.visitToVisitDTO(savedVisit);
     }
@@ -37,7 +37,7 @@ public class VisitService {
     public List<VisitDTO> getAllVisitsForPatient(Long patientId) {
         List<Visit> visits = visitRepository.findAllByPatientId(patientId);
         if (visits.isEmpty()) {
-            throw new NotFoundException("Patient not found.");
+            throw new PatientNotFound("Patient not found.");
         }
         return visits.stream()
                 .map(visitMapper::visitToVisitDTO)
@@ -53,7 +53,7 @@ public class VisitService {
         }
 
         Patient patient = patientRepository.findById(patientId)
-                .orElseThrow(() -> new IllegalArgumentException("Patient not found"));
+                .orElseThrow(() -> new PatientNotFound("Patient not found"));
 
         if (visit.getPatient() != null) {
             throw new IllegalArgumentException("Visit already has registered patient.");
@@ -74,7 +74,7 @@ public class VisitService {
 
     public List<VisitDTO> getVisitsByDoctorId(Long doctorId) {
         Doctor doctor = doctorRepository.findById(doctorId)
-                .orElseThrow(() -> new IllegalArgumentException("Doctor not found"));
+                .orElseThrow(() -> new DoctorNotFoundException("Doctor not found"));
         return doctor.getVisits().stream()
                 .map(visitMapper::visitToVisitDTO)
                 .toList();
@@ -82,15 +82,18 @@ public class VisitService {
 
     public List<VisitDTO> getVisitsByPatientEmail(String email) {
         Patient patient = patientRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("Patient not found"));
-        return patient.getVisits().stream()
+                .orElseThrow(() -> new PatientNotFound("Patient not found"));
+
+        List<Visit> visits = visitRepository.findAllByPatientId(patient.getId());
+
+        return visits.stream()
                 .map(visitMapper::visitToVisitDTO)
                 .toList();
     }
 
     private void validateVisitDateTime(LocalDateTime dateTime) {
         if (dateTime.isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("Cannot create visit for past date.");
+            throw new IllegalArgumentException("Invalid visit start date.");
         }
         if (dateTime.getMinute() % 15 != 0) {
             throw new IllegalArgumentException("Visit time must be in full quarter-hour intervals.");

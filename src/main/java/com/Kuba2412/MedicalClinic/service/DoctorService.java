@@ -1,7 +1,8 @@
 package com.Kuba2412.MedicalClinic.service;
 
+import com.Kuba2412.MedicalClinic.handler.exception.DoctorNotFoundException;
 import com.Kuba2412.MedicalClinic.model.mapper.DoctorMapper;
-import com.Kuba2412.MedicalClinic.model.mapper.SimpleDoctorDTO;
+import com.Kuba2412.MedicalClinic.model.dto.SimpleDoctorDTO;
 import com.Kuba2412.MedicalClinic.model.Doctor;
 import com.Kuba2412.MedicalClinic.model.Institution;
 import com.Kuba2412.MedicalClinic.model.dto.DoctorDTO;
@@ -34,6 +35,9 @@ public class DoctorService {
 
     @Transactional
     public void createDoctor(DoctorDTO doctorDTO) {
+        if (doctorDTO == null) {
+            throw new IllegalArgumentException("Doctor can't be null.");
+        }
         Doctor doctor = doctorMapper.toDoctor(doctorDTO);
         doctorRepository.save(doctor);
     }
@@ -100,10 +104,9 @@ public class DoctorService {
      * - Wynik: Metoda powinna rzucać wyjątek, gdy identyfikator lekarza nie istnieje.
      */
 
-    @Transactional
     public List<Institution> getAssignedInstitutionsForDoctor(Long doctorId) {
         Doctor doctor = doctorRepository.findById(doctorId)
-                .orElseThrow(() -> new IllegalArgumentException("Doctor not found"));
+                .orElseThrow(() -> new DoctorNotFoundException("Doctor not found"));
         return doctor.getInstitutions();
     }
 }

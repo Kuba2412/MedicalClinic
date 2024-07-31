@@ -1,5 +1,6 @@
 package com.Kuba2412.MedicalClinic.service;
 
+import com.Kuba2412.MedicalClinic.handler.exception.UserNotFoundException;
 import com.Kuba2412.MedicalClinic.model.User;
 import com.Kuba2412.MedicalClinic.repository.UserRepository;
 
@@ -47,7 +48,7 @@ public class UserService {
 
     public User getUserId(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found."));
+                .orElseThrow(() -> new UserNotFoundException("User not found."));
     }
 
     /**
@@ -80,7 +81,7 @@ public class UserService {
 
     public User updatePassword(String username, String newPassword) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("User not found."));
+                .orElseThrow(() -> new UserNotFoundException("User not found."));
         user.setPassword(newPassword);
         return userRepository.save(user);
     }

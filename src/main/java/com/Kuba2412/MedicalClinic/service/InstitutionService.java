@@ -32,6 +32,9 @@ public class InstitutionService {
      */
 
     public void createInstitution(InstitutionDTO institutionDTO) {
+        if (institutionDTO == null) {
+            throw new IllegalArgumentException("Institution can't be null.");
+        }
         Institution institution = institutionMapper.toInstitution(institutionDTO);
         institutionRepository.save(institution);
     }

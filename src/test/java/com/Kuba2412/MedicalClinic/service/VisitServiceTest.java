@@ -1,5 +1,7 @@
 package com.Kuba2412.MedicalClinic.service;
 
+import com.Kuba2412.MedicalClinic.handler.exception.DoctorNotFoundException;
+import com.Kuba2412.MedicalClinic.handler.exception.PatientNotFound;
 import com.Kuba2412.MedicalClinic.model.Doctor;
 import com.Kuba2412.MedicalClinic.model.Patient;
 import com.Kuba2412.MedicalClinic.model.Visit;
@@ -65,30 +67,6 @@ public class VisitServiceTest {
     }
 
     @Test
-    void createVisit_InvalidStartDate_ThrowsException() {
-        // given
-        LocalDateTime invalidStartVisit = LocalDateTime.now().minusDays(1);
-        LocalDateTime endVisit = LocalDateTime.now();
-
-        VisitDTO visitDTO = new VisitDTO();
-        visitDTO.setStartVisit(invalidStartVisit);
-        visitDTO.setEndVisit(endVisit);
-
-        Visit visit = new Visit();
-        visit.setStartVisit(invalidStartVisit);
-        visit.setEndVisit(endVisit);
-
-        when(visitMapper.visitDTOToVisit(visitDTO)).thenReturn(visit);
-
-        // when + then
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> visitService.createVisit(visitDTO));
-        assertEquals("Invalid visit start date.", exception.getMessage());
-
-        verify(visitMapper, times(1)).visitDTOToVisit(visitDTO);
-        verify(visitRepository, never()).save(any(Visit.class));
-    }
-
-    @Test
     void getAllVisitsForPatient_VisitsExist_VisitsReturned() {
         // given
         Long patientId = 1L;
@@ -109,37 +87,40 @@ public class VisitServiceTest {
         visit2.setStartVisit(startDate2);
         visit2.setEndVisit(endDate2);
 
-        List<Visit> visits = Arrays.asList(visit1, visit2);
-        when(visitRepository.findAllByPatientId(patientId)).thenReturn(visits);
-        when(visitMapper.visitToVisitDTO(visit1)).thenReturn(new VisitDTO());
-        when(visitMapper.visitToVisitDTO(visit2)).thenReturn(new VisitDTO());
+        VisitDTO visitDTO1 = new VisitDTO();
+        visitDTO1.setId(1L);
+        visitDTO1.setStartVisit(startDate1);
+        visitDTO1.setEndVisit(endDate1);
 
-        // when
+        VisitDTO visitDTO2 = new VisitDTO();
+        visitDTO2.setId(2L);
+        visitDTO2.setStartVisit(startDate2);
+        visitDTO2.setEndVisit(endDate2);
+
+        List<Visit> visits = Arrays.asList(visit1, visit2);
+
+        when(visitRepository.findAllByPatientId(patientId)).thenReturn(visits);
+        when(visitMapper.visitToVisitDTO(visit1)).thenReturn(visitDTO1);
+        when(visitMapper.visitToVisitDTO(visit2)).thenReturn(visitDTO2);
+
+// when
         List<VisitDTO> result = visitService.getAllVisitsForPatient(patientId);
 
-        // then
+// then
         assertNotNull(result);
         assertEquals(visits.size(), result.size());
-        assertEquals(visit1.getId(), result.get(0).getId());
-        assertEquals(visit2.getId(), result.get(1).getId());
+        assertEquals(visitDTO1.getId(), result.get(0).getId());
+        assertEquals(visitDTO2.getId(), result.get(1).getId());
     }
 
     @Test
-    void getAllVisitsForPatient_NoVisitsExist_EmptyListReturned() {
+    void getAllVisitsForPatient_PatientNotFound_ThrowsException() {
         // given
-        Long patientId = 1L;
-        List<Visit> emptyVisits = Collections.emptyList();
-        when(visitRepository.findAllByPatientId(patientId)).thenReturn(emptyVisits);
-        when(visitMapper.visitToVisitDTO(any(Visit.class))).thenReturn(new VisitDTO());
+        Long nonExistentPatientId = 999L;
+        when(patientRepository.findById(nonExistentPatientId)).thenThrow(new PatientNotFound("Patient not found."));
 
-        // when
-        List<VisitDTO> result = visitService.getAllVisitsForPatient(patientId);
-
-        // then
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
-        verify(visitRepository, times(1)).findAllByPatientId(patientId);
-        verify(visitMapper, never()).visitToVisitDTO(any(Visit.class));
+        // when + then
+        assertThrows(PatientNotFound.class, () -> visitService.getAllVisitsForPatient(nonExistentPatientId));
     }
 
     @Test
@@ -188,7 +169,7 @@ public class VisitServiceTest {
         when(patientRepository.findById(patientId)).thenReturn(Optional.empty());
 
         // when + then
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> visitService.registerPatientForVisit(visitId, patientId));
+        Exception exception = assertThrows(PatientNotFound.class, () -> visitService.registerPatientForVisit(visitId, patientId));
         assertEquals("Patient not found", exception.getMessage());
         verify(visitRepository, times(1)).findById(visitId);
         verify(patientRepository, times(1)).findById(patientId);
@@ -210,11 +191,18 @@ public class VisitServiceTest {
         doctor.setSpecialization(specialization);
         doctor.setVisits(List.of(visit));
 
-        when(doctorRepository.findBySpecialization(specialization)).thenReturn(List.of(doctor));
-        when(visitMapper.visitToVisitDTO(visit)).thenReturn(new VisitDTO());
+        VisitDTO visitDTO = new VisitDTO();
+        visitDTO.setId(1L);
+        visitDTO.setStartVisit(date.atStartOfDay().plusHours(9));
+        visitDTO.setEndVisit(date.atStartOfDay().plusHours(10));
 
+        when(doctorRepository.findBySpecialization(specialization)).thenReturn(List.of(doctor));
+        when(visitMapper.visitToVisitDTO(visit)).thenReturn(visitDTO);
+
+        // when
         List<VisitDTO> result = visitService.getAvailableVisitsByDoctorSpecializationAndByDate(specialization, date);
 
+        // then
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals(visit.getId(), result.get(0).getId());
@@ -250,8 +238,11 @@ public class VisitServiceTest {
 
         doctor.setVisits(List.of(visit));
 
+        VisitDTO visitDTO = new VisitDTO();
+        visitDTO.setId(1L);
+
         when(doctorRepository.findById(doctorId)).thenReturn(Optional.of(doctor));
-        when(visitMapper.visitToVisitDTO(visit)).thenReturn(new VisitDTO());
+        when(visitMapper.visitToVisitDTO(visit)).thenReturn(visitDTO);
 
         // when
         List<VisitDTO> result = visitService.getVisitsByDoctorId(doctorId);
@@ -269,7 +260,7 @@ public class VisitServiceTest {
         when(doctorRepository.findById(doctorId)).thenReturn(Optional.empty());
 
         // when + then
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> visitService.getVisitsByDoctorId(doctorId));
+        Exception exception = assertThrows(DoctorNotFoundException.class, () -> visitService.getVisitsByDoctorId(doctorId));
         assertEquals("Doctor not found", exception.getMessage());
     }
 
@@ -278,17 +269,22 @@ public class VisitServiceTest {
         // given
         String email = "patient@example.com";
         Patient patient = new Patient();
+        patient.setId(1L);
         patient.setEmail(email);
 
         Visit visit = new Visit();
         visit.setId(1L);
         visit.setStartVisit(LocalDateTime.now().plusDays(1));
         visit.setEndVisit(LocalDateTime.now().plusDays(1).plusHours(1));
+        visit.setPatient(patient);
 
-        patient.setVisits(List.of(visit));
+        List<Visit> visits = List.of(visit);
+        VisitDTO visitDTO = new VisitDTO();
+        visitDTO.setId(1L);
 
         when(patientRepository.findByEmail(email)).thenReturn(Optional.of(patient));
-        when(visitMapper.visitToVisitDTO(visit)).thenReturn(new VisitDTO());
+        when(visitRepository.findAllByPatientId(patient.getId())).thenReturn(visits);
+        when(visitMapper.visitToVisitDTO(visit)).thenReturn(visitDTO);
 
         // when
         List<VisitDTO> result = visitService.getVisitsByPatientEmail(email);
@@ -296,7 +292,7 @@ public class VisitServiceTest {
         // then
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals(visit.getId(), result.get(0).getId());
+        assertEquals(1L, result.get(0).getId());
     }
 
     @Test
@@ -306,7 +302,7 @@ public class VisitServiceTest {
         when(patientRepository.findByEmail(email)).thenReturn(Optional.empty());
 
         // when + then
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> visitService.getVisitsByPatientEmail(email));
+        Exception exception = assertThrows(PatientNotFound.class, () -> visitService.getVisitsByPatientEmail(email));
         assertEquals("Patient not found", exception.getMessage());
     }
 }

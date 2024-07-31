@@ -1,5 +1,6 @@
 package com.Kuba2412.MedicalClinic.service;
 
+import com.Kuba2412.MedicalClinic.handler.exception.UserNotFoundException;
 import com.Kuba2412.MedicalClinic.model.User;
 import com.Kuba2412.MedicalClinic.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -72,7 +73,7 @@ public class UserServiceTest {
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
         // when and then
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> userService.getUserId(userId));
+        Exception exception = assertThrows(UserNotFoundException.class, () -> userService.getUserId(userId));
         assertEquals("User not found.", exception.getMessage());
     }
 
@@ -120,7 +121,7 @@ public class UserServiceTest {
         when(userRepository.findByUsername(username)).thenReturn(Optional.empty());
 
         // when
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+        Exception exception = assertThrows(UserNotFoundException.class, () -> {
             userService.updatePassword(username, newPassword);
         });
 

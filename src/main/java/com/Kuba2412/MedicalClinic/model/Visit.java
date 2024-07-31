@@ -22,6 +22,7 @@ public class Visit {
     private LocalDateTime endVisit;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "patient_id")
     private Patient patient;
 
