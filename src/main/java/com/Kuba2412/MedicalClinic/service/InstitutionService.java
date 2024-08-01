@@ -1,5 +1,6 @@
 package com.Kuba2412.MedicalClinic.service;
 
+import com.Kuba2412.MedicalClinic.handler.exception.InstitutionNotFound;
 import com.Kuba2412.MedicalClinic.model.mapper.InstitutionMapper;
 import com.Kuba2412.MedicalClinic.model.Doctor;
 import com.Kuba2412.MedicalClinic.model.Institution;
@@ -72,7 +73,7 @@ public class InstitutionService {
 
     public List<Doctor> getDoctorsForInstitution(Long institutionId) {
         Institution institution = institutionRepository.findById(institutionId)
-                .orElseThrow(() -> new IllegalArgumentException("Institution not found"));
+                .orElseThrow(() -> new InstitutionNotFound("Institution not found."));
         return institution.getDoctors();
     }
 }

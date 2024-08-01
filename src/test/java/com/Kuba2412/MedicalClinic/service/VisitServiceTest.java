@@ -2,6 +2,7 @@ package com.Kuba2412.MedicalClinic.service;
 
 import com.Kuba2412.MedicalClinic.handler.exception.DoctorNotFoundException;
 import com.Kuba2412.MedicalClinic.handler.exception.PatientNotFound;
+import com.Kuba2412.MedicalClinic.handler.exception.VisitNotFound;
 import com.Kuba2412.MedicalClinic.model.Doctor;
 import com.Kuba2412.MedicalClinic.model.Patient;
 import com.Kuba2412.MedicalClinic.model.Visit;
@@ -151,8 +152,8 @@ public class VisitServiceTest {
         when(visitRepository.findById(visitId)).thenReturn(Optional.empty());
 
         // when + then
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> visitService.registerPatientForVisit(visitId, patientId));
-        assertEquals("Visit not found", exception.getMessage());
+        Exception exception = assertThrows(VisitNotFound.class, () -> visitService.registerPatientForVisit(visitId, patientId));
+        assertEquals("Visit not found.", exception.getMessage());
         verify(visitRepository, times(1)).findById(visitId);
         verify(patientRepository, never()).findById(anyLong());
     }
@@ -170,7 +171,7 @@ public class VisitServiceTest {
 
         // when + then
         Exception exception = assertThrows(PatientNotFound.class, () -> visitService.registerPatientForVisit(visitId, patientId));
-        assertEquals("Patient not found", exception.getMessage());
+        assertEquals("Patient not found.", exception.getMessage());
         verify(visitRepository, times(1)).findById(visitId);
         verify(patientRepository, times(1)).findById(patientId);
     }
@@ -209,19 +210,19 @@ public class VisitServiceTest {
     }
 
     @Test
-    void getAvailableVisitsByDoctorSpecializationAndByDate_NoVisitsAvailable_EmptyListReturned() {
+    void getAvailableVisitsByDoctorSpecializationAndByDate_NoVisitsAvailable_ThrowVisitNotFoundException() {
         // given
         String specialization = "Cardiology";
         LocalDate date = LocalDate.of(2024, 10, 15);
 
-        when(doctorRepository.findBySpecialization(specialization)).thenReturn(Collections.emptyList());
+        when(doctorRepository.findBySpecialization(specialization)).thenThrow(new VisitNotFound("Visit not found."));
 
-        // when
-        List<VisitDTO> result = visitService.getAvailableVisitsByDoctorSpecializationAndByDate(specialization, date);
+        // when + then
+        VisitNotFound exception = assertThrows(VisitNotFound.class, () ->
+                visitService.getAvailableVisitsByDoctorSpecializationAndByDate(specialization, date)
+        );
 
-        // then
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
+        assertEquals("Visit not found.", exception.getMessage());
     }
 
     @Test
@@ -261,7 +262,7 @@ public class VisitServiceTest {
 
         // when + then
         Exception exception = assertThrows(DoctorNotFoundException.class, () -> visitService.getVisitsByDoctorId(doctorId));
-        assertEquals("Doctor not found", exception.getMessage());
+        assertEquals("Doctor not found.", exception.getMessage());
     }
 
     @Test
@@ -303,6 +304,6 @@ public class VisitServiceTest {
 
         // when + then
         Exception exception = assertThrows(PatientNotFound.class, () -> visitService.getVisitsByPatientEmail(email));
-        assertEquals("Patient not found", exception.getMessage());
+        assertEquals("Patient not found.", exception.getMessage());
     }
 }

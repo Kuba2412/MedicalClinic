@@ -52,7 +52,7 @@ public class PatientService {
      */
 
     @Transactional
-    public List<PatientDTO> getPatientDtosByFirstName(String firstName, Pageable pageable) {
+    public List<PatientDTO> getPatients(String firstName, Pageable pageable) {
         List<Patient> patients = firstName != null
                 ? patientRepository.findByFirstName(firstName, pageable).getContent()
                 : patientRepository.findAll(pageable).getContent();
@@ -91,7 +91,7 @@ public class PatientService {
 
     public void deletePatientByEmail(String email) {
         Patient patient = patientRepository.findByEmail(email)
-                .orElseThrow(() -> new PatientNotFound("Patient not found"));
+                .orElseThrow(() -> new PatientNotFound("Patient not found."));
         patientRepository.delete(patient);
     }
 
@@ -123,7 +123,7 @@ public class PatientService {
     @Transactional
     public PatientDTO updatePatientByEmail(String email, PatientDTO newPatientDto) {
         Patient patient = patientRepository.findByEmail(email)
-                .orElseThrow(() -> new PatientNotFound("Patient not found"));
+                .orElseThrow(() -> new PatientNotFound("Patient not found."));
 
         if (newPatientDto.getFirstName() != null) {
             patient.setFirstName(newPatientDto.getFirstName());

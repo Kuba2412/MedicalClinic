@@ -3,7 +3,7 @@ services:
   medicalclinic:
     container_name: medicalclinic
     build:
-      context: C:/Users/Komputer/IdeaProjects/MedicalClinic
+      context: .
       dockerfile: Dockerfile
     ports:
       - "8080:8080"

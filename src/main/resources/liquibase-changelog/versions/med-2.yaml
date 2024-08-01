@@ -12,8 +12,8 @@ databaseChangeLog:
                     nullable: false
                     primaryKey: true
                     primaryKeyName: pk_user_id
-                    name: id
-                    type: BIGINT
+                  name: id
+                  type: BIGINT
               - column:
                   name: username
                   type: VARCHAR(255)

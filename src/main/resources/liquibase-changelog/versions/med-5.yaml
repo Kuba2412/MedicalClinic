@@ -21,11 +21,11 @@ databaseChangeLog:
                   name: city
                   type: VARCHAR(255)
               - column:
-                  name: postalCode
+                  name: postal_Code
                   type: VARCHAR(20)
               - column:
                   name: street
                   type: VARCHAR(255)
               - column:
-                  name: buildingNumber
+                  name: building_Number
                   type: BIGINT

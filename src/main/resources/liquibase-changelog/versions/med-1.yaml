@@ -21,16 +21,16 @@ databaseChangeLog:
                     unique: true
                     uniqueConstraintName: uk_patient_email
               - column:
-                  name: idCardNo
+                  name: id_Card_No
                   type: VARCHAR(255)
               - column:
-                  name: firstName
+                  name: first_Name
                   type: VARCHAR(255)
               - column:
-                  name: lastName
+                  name: last_Name
                   type: VARCHAR(255)
               - column:
-                  name: phoneNumber
+                  name: phone_Number
                   type: VARCHAR(255)
               - column:
                   name: birthday

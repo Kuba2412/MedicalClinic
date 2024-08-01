@@ -37,8 +37,8 @@ public class PatientController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "List of patients returned successfully")
     })
-    public List<PatientDTO> getPatientsByFirstName(@RequestParam String firstName, Pageable pageable) {
-        return patientService.getPatientDtosByFirstName(firstName, pageable);
+    public List<PatientDTO> getPatients(@RequestParam(required = false) String firstName, Pageable pageable) {
+        return patientService.getPatients(firstName, pageable);
     }
 
     @PostMapping

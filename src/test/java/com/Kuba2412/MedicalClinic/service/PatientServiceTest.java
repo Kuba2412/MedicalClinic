@@ -76,7 +76,7 @@ public class PatientServiceTest {
         when(patientRepository.findByFirstName(firstName, pageable)).thenReturn(patientPage);
 
         // when
-        List<PatientDTO> result = patientService.getPatientDtosByFirstName(firstName, pageable);
+        List<PatientDTO> result = patientService.getPatients(firstName, pageable);
 
         // then
         assertNotNull(result);
@@ -123,7 +123,7 @@ public class PatientServiceTest {
 
         // when + then
         Exception exception = assertThrows(PatientNotFound.class, () -> patientService.deletePatientByEmail(patientEmail2));
-        assertEquals("Patient not found" , exception.getMessage());
+        assertEquals("Patient not found." , exception.getMessage());
         verify(patientRepository, times(1)).findByEmail(patientEmail2);
         verify(patientRepository, never()).delete(any(Patient.class));
     }
@@ -165,7 +165,7 @@ public class PatientServiceTest {
 
         // when + then
         Exception exception = assertThrows(PatientNotFound.class, () -> patientService.updatePatientByEmail(nonExsistentEmail1, newPatientDto));
-        assertEquals("Patient not found" , exception.getMessage());
+        assertEquals("Patient not found." , exception.getMessage());
         verify(patientRepository, times(1)).findByEmail(nonExsistentEmail1);
     }
 

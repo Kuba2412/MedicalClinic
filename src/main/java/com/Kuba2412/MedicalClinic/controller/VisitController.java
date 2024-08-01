@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -25,7 +26,7 @@ public class VisitController {
             @ApiResponse(responseCode = "400", description = "Invalid data or registration not allowed"),
             @ApiResponse(responseCode = "404", description = "Visit or patient not found")
     })
-    @PostMapping("/{visitId}/register")
+    @PostMapping("/visits/{visitId}/patient/{patientId}/register")
     public void registerPatientForVisit(@PathVariable Long visitId, @RequestParam Long patientId) {
         visitService.registerPatientForVisit(visitId, patientId);
     }
@@ -67,6 +68,7 @@ public class VisitController {
             @ApiResponse(responseCode = "201", description = "Visit created successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid input data")
     })
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public VisitDTO createVisit(@RequestBody VisitDTO visitDTO) {
         return visitService.createVisit(visitDTO);

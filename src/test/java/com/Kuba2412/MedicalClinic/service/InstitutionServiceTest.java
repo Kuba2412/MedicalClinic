@@ -1,5 +1,6 @@
 package com.Kuba2412.MedicalClinic.service;
 
+import com.Kuba2412.MedicalClinic.handler.exception.InstitutionNotFound;
 import com.Kuba2412.MedicalClinic.model.Doctor;
 import com.Kuba2412.MedicalClinic.model.Institution;
 import com.Kuba2412.MedicalClinic.model.dto.InstitutionDTO;
@@ -137,8 +138,8 @@ public class InstitutionServiceTest {
         Long nonExsistenInstituionId = 12345L;
 
         // when + then
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> institutionService.getDoctorsForInstitution(nonExsistenInstituionId));
-        assertEquals("Institution not found" , exception.getMessage());
+        Exception exception = assertThrows(InstitutionNotFound.class, () -> institutionService.getDoctorsForInstitution(nonExsistenInstituionId));
+        assertEquals("Institution not found." , exception.getMessage());
         verify(institutionRepository, times(1)).findById(nonExsistenInstituionId);
     }
 }

@@ -2,6 +2,7 @@ package com.Kuba2412.MedicalClinic.service;
 
 import com.Kuba2412.MedicalClinic.handler.exception.DoctorNotFoundException;
 import com.Kuba2412.MedicalClinic.handler.exception.PatientNotFound;
+import com.Kuba2412.MedicalClinic.handler.exception.VisitNotFound;
 import com.Kuba2412.MedicalClinic.model.Doctor;
 import com.Kuba2412.MedicalClinic.model.mapper.VisitMapper;
 import com.Kuba2412.MedicalClinic.model.Patient;
@@ -29,6 +30,9 @@ public class VisitService {
 
     @Transactional
     public VisitDTO createVisit(VisitDTO visitDTO) {
+        if (visitDTO == null) {
+            throw new IllegalArgumentException("Visit can't be null.");
+        }
         Visit visit = visitMapper.visitDTOToVisit(visitDTO);
         Visit savedVisit = visitRepository.save(visit);
         return visitMapper.visitToVisitDTO(savedVisit);
@@ -46,14 +50,14 @@ public class VisitService {
 
     public void registerPatientForVisit(Long visitId, Long patientId) {
         Visit visit = visitRepository.findById(visitId)
-                .orElseThrow(() -> new IllegalArgumentException("Visit not found"));
+                .orElseThrow(() -> new VisitNotFound("Visit not found."));
 
         if (visit.getStartVisit().isBefore(LocalDateTime.now())) {
             throw new IllegalArgumentException("Cannot register for past visit.");
         }
 
         Patient patient = patientRepository.findById(patientId)
-                .orElseThrow(() -> new PatientNotFound("Patient not found"));
+                .orElseThrow(() -> new PatientNotFound("Patient not found."));
 
         if (visit.getPatient() != null) {
             throw new IllegalArgumentException("Visit already has registered patient.");
@@ -65,16 +69,22 @@ public class VisitService {
 
     public List<VisitDTO> getAvailableVisitsByDoctorSpecializationAndByDate(String specialization, LocalDate date) {
         List<Doctor> doctors = doctorRepository.findBySpecialization(specialization);
-        return doctors.stream()
+        List<VisitDTO> visitDTOs = doctors.stream()
                 .flatMap(doctor -> doctor.getVisits().stream())
                 .filter(visit -> visit.getStartVisit().toLocalDate().equals(date))
                 .map(visitMapper::visitToVisitDTO)
                 .toList();
+
+        if (visitDTOs.isEmpty()) {
+            throw new VisitNotFound("Visit not found.");
+        }
+
+        return visitDTOs;
     }
 
     public List<VisitDTO> getVisitsByDoctorId(Long doctorId) {
         Doctor doctor = doctorRepository.findById(doctorId)
-                .orElseThrow(() -> new DoctorNotFoundException("Doctor not found"));
+                .orElseThrow(() -> new DoctorNotFoundException("Doctor not found."));
         return doctor.getVisits().stream()
                 .map(visitMapper::visitToVisitDTO)
                 .toList();
@@ -82,7 +92,7 @@ public class VisitService {
 
     public List<VisitDTO> getVisitsByPatientEmail(String email) {
         Patient patient = patientRepository.findByEmail(email)
-                .orElseThrow(() -> new PatientNotFound("Patient not found"));
+                .orElseThrow(() -> new PatientNotFound("Patient not found."));
 
         List<Visit> visits = visitRepository.findAllByPatientId(patient.getId());
 

@@ -15,10 +15,10 @@ databaseChangeLog:
                   name: id
                   type: BIGINT
               - column:
-                  name: firstName
+                  name: first_Name
                   type: VARCHAR(255)
               - column:
-                  name: lastName
+                  name: last_Name
                   type: VARCHAR(255)
               - column:
                   name: specialization
