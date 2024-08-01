@@ -23,15 +23,25 @@ databaseChangeLog:
               - column:
                   name: id_Card_No
                   type: VARCHAR(255)
+                  constraints:
+                    nullable: false
               - column:
                   name: first_Name
                   type: VARCHAR(255)
+                  constraints:
+                    nullable: false
               - column:
                   name: last_Name
                   type: VARCHAR(255)
+                  constraints:
+                    nullable: false
               - column:
                   name: phone_Number
                   type: VARCHAR(255)
+                  constraints:
+                    nullable: false
               - column:
                   name: birthday
                   type: DATE
+                  constraints:
+                    nullable: false

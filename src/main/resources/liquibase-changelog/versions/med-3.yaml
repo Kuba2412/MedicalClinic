@@ -17,9 +17,13 @@ databaseChangeLog:
               - column:
                   name: start_visit
                   type: TIMESTAMP
+                  constraints:
+                    nullable: false
               - column:
                   name: end_visit
                   type: TIMESTAMP
+                  constraints:
+                    nullable: false
               - column:
                   name: patient_id
                   type: BIGINT
