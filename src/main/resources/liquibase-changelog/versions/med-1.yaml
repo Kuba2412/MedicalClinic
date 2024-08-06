@@ -1,0 +1,47 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: Kuba2412
+      changes:
+        - createTable:
+            tableName: PATIENT
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_patient_id
+                  name: id
+                  type: BIGINT
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+                  constraints:
+                    unique: true
+                    uniqueConstraintName: uk_patient_email
+              - column:
+                  name: id_Card_No
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: first_Name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_Name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: phone_Number
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: birthday
+                  type: DATE
+                  constraints:
+                    nullable: false
